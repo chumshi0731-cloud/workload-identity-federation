@@ -1,0 +1,42 @@
+name: Test GCP Workload Identity Federation
+
+# 設定觸發條件：推送到 main 分支，或手動執行 (workflow_dispatch)
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  test-gcp-connection:
+    runs-on: ubuntu-latest
+    
+    # 【關鍵】必須要有這段權限，GitHub 才會產生 OIDC token 給 GCP
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 使用 Google 官方的 Auth Action
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          # === 請替換成你剛剛在 Cloud Shell 第 7 步取得的字串 ===
+          workload_identity_provider: 'projects/827588065038/locations/global/workloadIdentityPools/github-pool/providers/github-provider'
+          service_account: 'chumshi-federation@project-pic-cloudap.iam.gserviceaccount.com'
+
+      # 設定 gcloud CLI 環境
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
+
+      # 測試執行 GCP 指令
+      - name: 'Test gcloud command'
+        run: |
+          echo "登入成功！目前的身份是："
+          gcloud auth list
+          echo "========================"
+          echo "嘗試列出專案內的 Compute Engine 執行個體 (測試 Viewer 權限)："
+          gcloud compute instances list --project=${{ secrets.GCP_PROJECT_ID || '你的-project-id' }}
