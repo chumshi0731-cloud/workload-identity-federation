@@ -39,4 +39,4 @@ jobs:
           gcloud auth list
           echo "========================"
           echo "嘗試列出專案內的 Compute Engine 執行個體 (測試 Viewer 權限)："
-          gcloud compute instances list --project=${{ secrets.GCP_PROJECT_ID || '你的-project-id' }}
+          gcloud compute instances list --project=project-pic-cloudap
