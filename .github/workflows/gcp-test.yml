@@ -17,12 +17,12 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       # 使用 Google 官方的 Auth Action
       - id: 'auth'
         name: 'Authenticate to Google Cloud'
-        uses: 'google-github-actions/auth@v2'
+        uses: 'google-github-actions/auth@v1'
         with:
           # === 請替換成你剛剛在 Cloud Shell 第 7 步取得的字串 ===
           workload_identity_provider: 'projects/827588065038/locations/global/workloadIdentityPools/github-pool/providers/github-provider'
